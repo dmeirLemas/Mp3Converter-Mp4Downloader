@@ -1,5 +1,6 @@
 #!/opt/homebrew/bin/python3
 
+import os
 import sys
 import threading
 import argparse
@@ -56,7 +57,7 @@ def main():
         ydl_opts = {
             'format': 'best',
             'quiet': True,
-            'outtmpl': f'%(title)s.mp4',
+            'outtmpl': f'downloaded_musics/%(title)s.mp4',
         }
     elif args.format == 'mp3':
         ydl_opts = {
@@ -65,7 +66,8 @@ def main():
             'postprocessors': [{  # Extract audio using ffmpeg
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-            }]
+            }],
+            'outtmpl': f'downloaded_musics/%(title)s.mp3',
         }
     else:
         print('\033[31m Unsupported output format. \033[0m')
@@ -75,7 +77,9 @@ def main():
     if args.document:
         links = read_doc(args.document)
 
+
     threadHandler(links, ydl_opts)
 
 if __name__ == '__main__':
     main()
+
