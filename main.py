@@ -2,10 +2,9 @@
 
 import os
 import sys
-import threading
 import argparse
+import multiprocessing
 from yt_dlp import YoutubeDL
-from concurrent.futures import ThreadPoolExecutor
 
 def download(link, options):
 	with YoutubeDL(options) as video:
@@ -35,14 +34,12 @@ def read_doc(file_path):
 	links = [link for sublist in links for link in sublist]
 	return links
 
-def threadHandler(links, options):
-	with ThreadPoolExecutor(max_workers=100) as executor:
-		futures = [executor.submit(download, link, options) for link in links]
-
-		for future in futures:
-			future.result()
-
-	sys.exit()
+def process_handler(links, options):
+	num_workers = min(len(links), multiprocessing.cpu_count())
+	pool = multiprocessing.Pool(processes=num_workers)
+	pool.starmap(download, [(link, options) for link in links])
+	pool.close()
+	pool.join()
 
 def main():
 	parser = argparse.ArgumentParser(description='Youtube video downloader')
@@ -79,7 +76,7 @@ def main():
 		links = read_doc(args.document)
 
 
-	threadHandler(links, ydl_opts)
+	process_handler(links, ydl_opts)
 
 if __name__ == '__main__':
 	main()
