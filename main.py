@@ -69,6 +69,7 @@ def main():
 		}
 	else:
 		print('\033[31m Unsupported output format. \033[0m')
+		sys.exit()
 
 	links = [args.link]
 
