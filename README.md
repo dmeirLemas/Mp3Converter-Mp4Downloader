@@ -8,4 +8,4 @@ Name search for videos?
 
 Stop depending on yt_dlp
 
-
+Make it into executable
